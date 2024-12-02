@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موسوعة الفرق</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>الموسوعات الإسلامية</h1>
+    </header>
+    <main>
+        <!-- Main Menu -->
+        <section id="main-menu" class="view active">
+            <div class="grid-container">
+                <div class="card" data-target="menu-فرق">
+                    <img src="book-icon.png" alt="Icon">
+                    <h3>موسوعة الفرق</h3>
+                </div>
+                <div class="card" data-target="menu-عقيدة">
+                    <img src="book-icon.png" alt="Icon">
+                    <h3>الموسوعة العقدية</h3>
+                </div>
+                <!-- Add more cards here -->
+            </div>
+        </section>
+
+        <!-- Sub Menu -->
+        <section id="menu-فرق" class="view">
+            <button class="back-btn" data-back="main-menu">رجوع</button>
+            <h2>موسوعة الفرق</h2>
+            <ul class="sub-list">
+                <li data-target="content-1">الكتاب الأول: مقدمات في علم العقيدة</li>
+                <li data-target="content-2">الكتاب الثاني: الإيمان بالله</li>
+                <li data-target="content-3">الكتاب الثالث: الإيمان بالملائكة</li>
+                <!-- Add more items here -->
+            </ul>
+        </section>
+
+        <!-- Detailed Content -->
+        <section id="content-1" class="view">
+            <button class="back-btn" data-back="menu-فرق">رجوع</button>
+            <h2>الكتاب الأول: مقدمات في علم العقيدة</h2>
+            <p>
+                هذا هو المحتوى المفصل للكتاب الأول. يمكن إضافة المزيد من التفاصيل هنا بما يتماشى مع التصميم.
+            </p>
+        </section>
+        <section id="content-2" class="view">
+            <button class="back-btn" data-back="menu-فرق">رجوع</button>
+            <h2>الكتاب الثاني: الإيمان بالله</h2>
+            <p>
+                هذا هو المحتوى المفصل للكتاب الثاني. يمكن تعديل النصوص حسب الحاجة.
+            </p>
+        </section>
+        <section id="content-3" class="view">
+            <button class="back-btn" data-back="menu-فرق">رجوع</button>
+            <h2>الكتاب الثالث: الإيمان بالملائكة</h2>
+            <p>
+                هذا هو المحتوى المفصل للكتاب الثالث. يمكن تعديل النصوص حسب الحاجة.
+            </p>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
