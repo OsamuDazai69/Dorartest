@@ -1,5 +1,6 @@
 import express from 'express';
 import fetch from 'node-fetch';
+import * as cheerio from 'cheerio';
 
 const app = express();
 const PORT = 3000;
@@ -18,48 +19,85 @@ const removeTashkeel = (text) => {
     return text.replace(/[\u0617-\u061A\u064B-\u0652]/g, '');
 };
 
+// Function to format metadata into the required HTML structure
+const formatHadith = (hadithText, metadata) => {
+    return `
+        <div class="hadith-card">
+            <div class="hadith-text">${hadithText}</div>
+            <div class="hadith-info">
+                <span class="label">الراوي:</span>
+                <span class="narrator">${metadata.narrator || 'غير معروف'}</span>
+                <span class="separator">|</span>
+                <span class="label">المحدث:</span>
+                <span class="source">${metadata.source || 'غير معروف'}</span>
+                <span class="separator">|</span>
+                <span class="label">المصدر:</span>
+                <span class="source">${metadata.book || 'غير معروف'}</span>
+                <span class="separator">|</span>
+                <span class="label">خلاصة حكم الحديث:</span>
+                <span class="verdict">${metadata.verdict || 'غير معروف'}</span>
+                <span class="separator">|</span>
+                <span class="label">الصفحة أو الرقم:</span>
+                <span>${metadata.page || 'غير معروف'}</span>
+            </div>
+            <div class="hadith-info related-links">
+                <a href="#">شرح حديث مشابه</a>
+                <span class="separator">|</span>
+                <a href="#">أحاديث مشابهة</a>
+            </div>
+        </div>
+    `;
+};
+
 // Route to handle API requests
 app.get('/proxy', async (req, res) => {
     const skey = req.query.skey; // Keyword to search
-    const tashkeel = req.query.tashkeel || 'on'; // Default to 'on' if not provided
+    const tashkeel = req.query.tashkeel || 'on'; // Default to 'on'
 
-    // Validate the keyword
     if (!skey) {
         return res.status(400).json({ error: 'Missing "skey" query parameter' });
     }
 
-    // Construct the Dorar API URL
     const apiUrl = `https://dorar.net/dorar_api.json?skey=${encodeURIComponent(skey)}`;
-    console.log(`Fetching API URL: ${apiUrl}`);
-
     try {
         const response = await fetch(apiUrl);
         if (!response.ok) {
             throw new Error(`Dorar API responded with status: ${response.status}`);
         }
 
-        let data = await response.json();
+        const data = await response.json();
+        if (data.ahadith && data.ahadith.result) {
+            const $ = cheerio.load(data.ahadith.result);
+            let formattedResults = '';
 
-        // If tashkeel is off, process the Hadith content
-        if (tashkeel === 'off' && data.ahadith && data.ahadith.result) {
-            const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(data.ahadith.result, 'text/html');
-            htmlDoc.querySelectorAll('.hadith, .hadith-info').forEach((el) => {
-                el.textContent = removeTashkeel(el.textContent);
+            $('.hadith').each((index, el) => {
+                const hadithText = $(el).text().trim();
+                const metadata = {
+                    narrator: $(el).next('.hadith-info').find('span:contains("الراوي")').text().split(':')[1]?.trim(),
+                    source: $(el).next('.hadith-info').find('span:contains("المحدث")').text().split(':')[1]?.trim(),
+                    book: $(el).next('.hadith-info').find('span:contains("المصدر")').text().split(':')[1]?.trim(),
+                    verdict: $(el).next('.hadith-info').find('span:contains("خلاصة حكم الحديث")').text().split(':')[1]?.trim(),
+                    page: $(el).next('.hadith-info').find('span:contains("الصفحة أو الرقم")').text().split(':')[1]?.trim(),
+                };
+
+                if (tashkeel === 'off') {
+                    metadata.narrator = removeTashkeel(metadata.narrator || '');
+                    metadata.source = removeTashkeel(metadata.source || '');
+                    metadata.book = removeTashkeel(metadata.book || '');
+                    metadata.verdict = removeTashkeel(metadata.verdict || '');
+                    metadata.page = removeTashkeel(metadata.page || '');
+                }
+
+                formattedResults += formatHadith(hadithText, metadata);
             });
 
-            // Serialize modified HTML back to a string
-            const serializer = new XMLSerializer();
-            data.ahadith.result = serializer.serializeToString(htmlDoc);
+            res.json({ html: formattedResults });
+        } else {
+            res.json({ error: 'لم يتم العثور على نتائج.' });
         }
-
-        res.json(data);
     } catch (error) {
         console.error(`Error fetching Dorar API: ${error.message}`);
-        res.status(500).json({
-            error: 'Failed to fetch data from the Dorar API',
-            details: error.message,
-        });
+        res.status(500).json({ error: 'Failed to fetch data from the Dorar API', details: error.message });
     }
 });
 
