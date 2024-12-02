@@ -1,27 +1,44 @@
-// Handle navigation between views
-document.querySelectorAll(".card, .sub-list li").forEach((element) => {
-    element.addEventListener("click", () => {
-        const targetView = element.getAttribute("data-target");
-        if (targetView) {
-            showView(targetView);
-        }
-    });
-});
+let includeTashkeel = true; // Default to including Tashkeel
 
-// Handle back buttons
-document.querySelectorAll(".back-btn").forEach((button) => {
-    button.addEventListener("click", () => {
-        const backView = button.getAttribute("data-back");
-        if (backView) {
-            showView(backView);
-        }
-    });
-});
+document.getElementById("search-btn").addEventListener("click", fetchHadith);
+document.getElementById("toggle-tashkeel").addEventListener("click", toggleTashkeel);
 
-// Function to toggle views
-function showView(viewId) {
-    document.querySelectorAll(".view").forEach((view) => {
-        view.classList.remove("active");
-    });
-    document.getElementById(viewId).classList.add("active");
+async function fetchHadith() {
+    const searchKey = document.getElementById('skey').value.trim();
+
+    if (!searchKey) {
+        document.getElementById('result').innerHTML = '<p>الرجاء إدخال كلمة البحث.</p>';
+        return;
+    }
+
+    const apiUrl = `http://localhost:3000/proxy?skey=${encodeURIComponent(searchKey)}&tashkeel=${includeTashkeel ? 'on' : 'off'}`;
+
+    try {
+        console.log(`Fetching data from: ${apiUrl}`); // Debugging
+
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        console.log('Received data:', data); // Debugging
+
+        if (data.html) {
+            document.getElementById('result').innerHTML = data.html;
+        } else if (data.error) {
+            document.getElementById('result').innerHTML = `<p>${data.error}</p>`;
+        } else {
+            document.getElementById('result').innerHTML = '<p>لم يتم العثور على نتائج.</p>';
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error.message); // Debugging
+        document.getElementById('result').innerHTML = `<p>خطأ: ${error.message}</p>`;
+    }
+}
+
+function toggleTashkeel() {
+    includeTashkeel = !includeTashkeel; // Toggle the state
+    const toggleButton = document.getElementById('toggle-tashkeel');
+    toggleButton.textContent = includeTashkeel ? 'بدون تشكيل' : 'مع تشكيل'; // Update button text
 }

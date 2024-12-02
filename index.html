@@ -3,64 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>موسوعة الفرق</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>البحث عن حديث</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #181818;
+            color: #e6e6e6;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #ffffff;
+        }
+        #search-container {
+            text-align: center;
+            margin: 20px;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-right: 5px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result {
+            margin-top: 20px;
+        }
+        .hadith-card {
+            background-color: #222;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px auto;
+            width: 80%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            color: #ffffff;
+        }
+        .hadith-card .hadith-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+        .hadith-card .hadith-info {
+            font-size: 16px;
+            color: #ccc;
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .hadith-card .hadith-info span {
+            display: inline-block;
+            margin-right: 15px;
+            font-size: 16px;
+        }
+        .hadith-card .hadith-info .label {
+            font-weight: bold;
+            color: #f5c518; /* Gold for labels */
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>الموسوعات الإسلامية</h1>
-    </header>
-    <main>
-        <!-- Main Menu -->
-        <section id="main-menu" class="view active">
-            <div class="grid-container">
-                <div class="card" data-target="menu-فرق">
-                    <img src="book-icon.png" alt="Icon">
-                    <h3>موسوعة الفرق</h3>
-                </div>
-                <div class="card" data-target="menu-عقيدة">
-                    <img src="book-icon.png" alt="Icon">
-                    <h3>الموسوعة العقدية</h3>
-                </div>
-                <!-- Add more cards here -->
-            </div>
-        </section>
-
-        <!-- Sub Menu -->
-        <section id="menu-فرق" class="view">
-            <button class="back-btn" data-back="main-menu">رجوع</button>
-            <h2>موسوعة الفرق</h2>
-            <ul class="sub-list">
-                <li data-target="content-1">الكتاب الأول: مقدمات في علم العقيدة</li>
-                <li data-target="content-2">الكتاب الثاني: الإيمان بالله</li>
-                <li data-target="content-3">الكتاب الثالث: الإيمان بالملائكة</li>
-                <!-- Add more items here -->
-            </ul>
-        </section>
-
-        <!-- Detailed Content -->
-        <section id="content-1" class="view">
-            <button class="back-btn" data-back="menu-فرق">رجوع</button>
-            <h2>الكتاب الأول: مقدمات في علم العقيدة</h2>
-            <p>
-                هذا هو المحتوى المفصل للكتاب الأول. يمكن إضافة المزيد من التفاصيل هنا بما يتماشى مع التصميم.
-            </p>
-        </section>
-        <section id="content-2" class="view">
-            <button class="back-btn" data-back="menu-فرق">رجوع</button>
-            <h2>الكتاب الثاني: الإيمان بالله</h2>
-            <p>
-                هذا هو المحتوى المفصل للكتاب الثاني. يمكن تعديل النصوص حسب الحاجة.
-            </p>
-        </section>
-        <section id="content-3" class="view">
-            <button class="back-btn" data-back="menu-فرق">رجوع</button>
-            <h2>الكتاب الثالث: الإيمان بالملائكة</h2>
-            <p>
-                هذا هو المحتوى المفصل للكتاب الثالث. يمكن تعديل النصوص حسب الحاجة.
-            </p>
-        </section>
-    </main>
+    <h1>البحث عن حديث</h1>
+    <div id="search-container">
+        <input type="text" id="skey" placeholder="أدخل كلمة البحث (مثل: الصلاة)">
+        <button id="search-btn">بحث</button>
+        <button id="toggle-tashkeel">بدون تشكيل</button>
+    </div>
+    <div id="result"></div>
     <script src="script.js"></script>
 </body>
 </html>
